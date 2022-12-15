@@ -1,7 +1,7 @@
 # FastBot
-Discord bot develloped by Fastattack
+A discord bot develloped by Fastattack
 
-The bot is developed in french
+The bot is developed in python in french
 
 With this code you can copy parts of it or inspire you to develop a bot
 
