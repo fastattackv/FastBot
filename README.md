@@ -1,4 +1,5 @@
 # FastBot
+English version of README
 A discord bot develloped by Fastattack
 
 The bot is developed in python in french
@@ -12,6 +13,7 @@ It contains :
 
 
 # FastBot
+Version française de README
 Un bot discord développé par Fastattack
 
 Le bot est développé en python en français
