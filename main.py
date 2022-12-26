@@ -21,6 +21,8 @@ with open("save channels règles", "rb") as j:
     dico_serv_regles = pickle.load(j)
 with open("save channels discu", "rb") as k:
     dico_serv_discu = pickle.load(k)
+with open("save channels admin", "rb") as l:
+    dico_serv_admin = pickle.load(l)
 
 # variables de devine
 joueur1 = False
@@ -50,6 +52,59 @@ async def on_member_join(membre):
 
 
 @bot.event
+async def on_guild_update(serveur_av, serveur_ap):
+    if serveur_av.name != serveur_ap.name:
+        if str(serveur_av) in dico_serv_jeu:
+            dico_serv_jeu[str(serveur_ap)] = dico_serv_jeu.pop(str(serveur_av))
+            with open("save channels jeu bot", "wb") as f:
+                pickle.dump(dico_serv_jeu, f)
+        if str(serveur_av) in dico_serv_arrivees:
+            dico_serv_arrivees[str(serveur_ap)] = dico_serv_arrivees.pop(str(serveur_av))
+            with open("save channels arrivées", "wb") as g:
+                pickle.dump(dico_serv_arrivees, g)
+        if str(serveur_av) in dico_serv_regles:
+            dico_serv_regles[str(serveur_ap)] = dico_serv_regles.pop(str(serveur_av))
+            with open("save channels règles", "wb") as j:
+                pickle.dump(dico_serv_regles, j)
+        if str(serveur_av) in dico_serv_discu:
+            dico_serv_discu[str(serveur_ap)] = dico_serv_discu.pop(str(serveur_av))
+            with open("save channels discu", "wb") as k:
+                pickle.dump(dico_serv_discu, k)
+        if str(serveur_av) in dico_serv_admin:
+            dico_serv_admin[str(serveur_ap)] = dico_serv_admin.pop(str(serveur_av))
+            with open("save channels admin", "wb") as l:
+                pickle.dump(dico_serv_admin, l)
+            channel_admin: discord.TextChannel = bot.get_channel(int(dico_serv_admin[str(serveur_ap)]))
+            await channel_admin.send("le nouveau nom du serveur a été pris en compte par FastBot")
+    print(f"    Changement de nom du serveur {serveur_av} en {serveur_ap}")
+
+
+@bot.event
+async def on_guild_remove(serveur_r):
+    if serveur_r in dico_serv_jeu:
+        del dico_serv_jeu[str(serveur_r)]
+        with open("save channels jeu bot", "wb") as f:
+            pickle.dump(dico_serv_jeu, f)
+    if serveur_r in dico_serv_arrivees:
+        del dico_serv_arrivees[str(serveur_r)]
+        with open("save channels arrivées", "wb") as g:
+            pickle.dump(dico_serv_arrivees, g)
+    if serveur_r in dico_serv_regles:
+        del dico_serv_regles[str(serveur_r)]
+        with open("save channels règles", "wb") as j:
+            pickle.dump(dico_serv_regles, j)
+    if serveur_r in dico_serv_discu:
+        del dico_serv_discu[str(serveur_r)]
+        with open("save channels discu", "wb") as k:
+            pickle.dump(dico_serv_discu, k)
+    if serveur_r in dico_serv_admin:
+        del dico_serv_admin[str(serveur_r)]
+        with open("save channels admin", "wb") as l:
+            pickle.dump(dico_serv_admin, l)
+    print(f"    Serveur {serveur_r} retiré de FastBot")
+
+
+@bot.event
 async def on_message(message):
     global joueur1
     global joueur2
@@ -62,7 +117,9 @@ async def on_message(message):
     global points
     global liste_points
     global dico_classement
-    channel_jeu = dico_serv_jeu[str(message.guild)]
+    channel_jeu = 0
+    if str(message.guild) in dico_serv_jeu:
+        channel_jeu = dico_serv_jeu[str(message.guild)]
     if message.author.name == "FastBot":
         pass
     else:
@@ -83,10 +140,12 @@ async def on_message(message):
     elif var_devine and str(message.channel.id) == channel_jeu and message.content.lower() == "moi":
         joueur2 = message.author
         id_joueur2 = message.author.id
-        if joueur1 in dico_classement == False:
-            dico_classement[joueur1] = 0
-        elif joueur2 in dico_classement == False:
-            dico_classement[joueur2] = 0
+        if joueur1 not in dico_classement:
+            dico_classement[str(joueur1)] = 0
+            print(f"    ajout de {joueur1} dans dico_classement")
+        elif joueur2 not in dico_classement == False:
+            dico_classement[str(joueur2)] = 0
+            print(f"    ajout de {joueur2} dans dico_classement")
         if joueur1 == joueur2:
             await message.channel.send("Tricheur !")
             await message.channel.send("On ne joue pas avec soi-même")
@@ -98,6 +157,7 @@ async def on_message(message):
             var_devine_j1 = False
             var_devine_j2 = False
         else:
+            await bot.change_presence(activity=discord.Activity(type=0, name=f"devine avec {joueur1} et {joueur2}"))
             await message.channel.send(f"<@{id_joueur1}> devine (le nombre entre 1 et 99)")
             var_devine_j1 = True
             nombre_a_d = random.randint(1, 99)
@@ -143,6 +203,7 @@ async def on_message(message):
                 joueur2 = False
                 points = 0
                 liste_points = []
+                await bot.change_presence(activity=discord.Activity(type=0, name=None))
                 with open("classement devine", "wb") as h:
                     pickle.dump(dico_classement, h)
             elif nombre_d < nombre_a_d:
@@ -196,6 +257,14 @@ async def on_message(message):
             await message.channel.send(f"le salon de discution est <#{dico_serv_discu[str(message.guild)]}>")
         else:
             await message.channel.send("tu n'es pas admin")
+    elif message.content == "<@1037734637285421197> .channel.messages_FastBot":
+        if message.author.guild_permissions.administrator:
+            dico_serv_admin[str(message.guild)] = str(message.channel.id)
+            with open("save channels admin", "wb") as l:
+                pickle.dump(dico_serv_admin, l)
+            await message.channel.send(f"le salon des messages pour les admins de FastBot est <#{dico_serv_admin[str(message.guild)]}>")
+        else:
+            await message.channel.send("tu n'es pas admin")
     elif message.content == "<@1037734637285421197> .channels":
         serveur = str(message.guild)
         await message.channel.send("Les salons de <@1037734637285421197> de ce serveur sont :")
@@ -215,6 +284,10 @@ async def on_message(message):
             await message.channel.send(f"Discution : <#{dico_serv_discu[str(serveur)]}>")
         else:
             await message.channel.send("Discution : Pas défini")
+        if serveur in dico_serv_admin:
+            await message.channel.send(f"Messages pour admins : <#{dico_serv_admin[str(serveur)]}>")
+        else:
+            await message.channel.send("Messages pour admins : Pas défini")
 
 
 bot.run(os.getenv("TOKEN"))
