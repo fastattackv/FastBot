@@ -1,0 +1,31 @@
+1- Inviter FastBot sur son serv grâce au lien et lui donner les perms demandées
+
+2- Définir les salons en envoyant les messages dans les salons concernés:
+	celui de jeu (@FastBot .channel.jeu)
+	celui des arrivées (@FastBot .channel.arrivées)
+	celui des règles (@FastBot .channel.règles) 
+	celui de discution générale (@FastBot .channel.discution)
+	celui de messages de FastBot pour les admins (@FastBot .channel.messages_FastBot)
+
+Si FastBot ne répond pas : vérifier l'orthographe des commandes (attention il y a un espace entre @FastBot et .)(si ça ne marche toujours pas veuillez contacter les développeurs sur le serveur d'aide de FastBot)
+
+Puis vérifier que les channels sont bien définis en utilisant la commande (@FastBot .channels) dans n'importe quel salon
+
+3- Définir les roles en envoyant les messages dans n'importe quel salon:
+	le role VIP (@FastBot .role_VIP @nom_du_role_VIP)
+
+Si FastBot ne répond pas : vérifier l'orthographe des commandes (attention il y a un espace entre @FastBot et .)(si ça ne marche toujours pas veuillez contacter les développeurs sur le serveur d'aide de FastBot)
+
+Puis vérifier que les roles sont bien définis en utilisant la commande (@FastBot .roles) dans n'importe quel salon
+
+
+4- S'amuser avec lui !
+
+
+Infos supplémentaires :
+- Si FastBot est hors-ligne, il ne répondera à aucune commande (ça ne sert à rien de le spam)
+- Certaines fonctionnalitées sont désactivées dans les serveurs autres que "Communuauté fastattack" pour des raisons d'économie de ressources sur les machines
+- Si vous modifiez un salon associé à FastBot, vérifiez que le salon est toujours bien associé avec la commande @FastBot .channels (normalement une modification de salon ne devrait pas affecter FastBot mais il faut vérifier)
+- De même si vous modifiez un rôle : vérifiez avec la commande @FastBot .roles
+- Si vous modifiez le nom de votre serveur, vérifiez que FastBot envoie un message de confirmation (en théorie il devrait update tout seul mais il est possible qu'il ne le voit pas, si c'est le cas veuillez contacter un développeur sur le serveur d'aide)
+- Pour retirer FastBot de votre serveur, il suffit de l'expulser avec les permissions nécéssaires
