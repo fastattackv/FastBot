@@ -1,4 +1,5 @@
-1- Inviter FastBot sur son serv grâce au lien et lui donner les perms demandées
+1- Inviter FastBot sur son serv grâce au lien et lui donner les perms demandées grâce au lien suivant : 
+https://discord.com/api/oauth2/authorize?client_id=1037734637285421197&permissions=8&scope=bot
 
 2- Définir les salons en envoyant les messages dans les salons concernés:
 	celui de jeu (@FastBot .channel.jeu)
