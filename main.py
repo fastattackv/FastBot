@@ -30,13 +30,28 @@ with open("monnaie FastBot", "rb") as m:
 with open("save roles vip", "rb") as w:
     dico_role_vip = pickle.load(w)
 
-print(dico_monnaie)
 
-# variables de devine
+var_jeu = False
 joueur1 = False
-joueur2 = False
-id_joueur1 = False
-id_joueur2 = False
+var_annul_argent = False
+var_annul_classement = False
+annul_a = None
+annul_c = None
+# variables de batons
+var_batons = False
+var_j2_batons = True
+var_batons_j1 = False
+var_batons_j2 = False
+nombre_batons = 24
+joueur1_batons = False
+joueur2_batons = False
+id_joueur1_batons = False
+id_joueur2_batons = False
+# variables de devine
+joueur1_devine = False
+joueur2_devine = False
+id_joueur1_devine = False
+id_joueur2_devine = False
 var_devine = False
 var_devine_j1 = False
 var_devine_j2 = False
@@ -130,16 +145,9 @@ async def on_guild_role_delete(role_s):
 
 @bot.event
 async def on_message(message):
-    global joueur1
-    global joueur2
-    global id_joueur1
-    global id_joueur2
-    global var_devine
-    global var_devine_j1
-    global var_devine_j2
-    global nombre_a_d
-    global points
-    global liste_points
+    global var_jeu, joueur1, var_annul_argent, var_annul_classement, annul_a, annul_c
+    global var_batons,var_j2_batons, var_batons_j1, var_batons_j2, joueur1_batons, joueur2_batons, id_joueur1_batons, id_joueur2_batons, nombre_batons
+    global joueur1_devine, joueur2_devine, id_joueur1_devine, id_joueur2_devine, var_devine, var_devine_j1, var_devine_j2, nombre_a_d, points, liste_points
     global dico_classement
     global dico_role_vip
     channel_jeu = 0
@@ -153,47 +161,92 @@ async def on_message(message):
         print(message.content)
     if message.content.lower() == "ping" and str(message.channel) == channel_jeu:
         await message.channel.send("pong")
-    # devine
     elif str(message.channel.id) == channel_jeu and message.content.lower() == "je veux jouer" and var_devine == False:
         joueur1 = message.author
-        print(joueur1)
-        id_joueur1 = message.author.id
-        var_devine = True
+        var_jeu = True
         await message.channel.send("à quoi ?")
-    elif var_devine and str(message.channel.id) == channel_jeu and message.author == joueur1 and message.content.lower() == "à devine":
-        await message.channel.send(f"qui joue avec {joueur1} ?")
-    elif var_devine and str(message.channel.id) == channel_jeu and message.content.lower() == "moi":
-        joueur2 = message.author
-        id_joueur2 = message.author.id
-        if joueur1 not in dico_classement:
+    elif var_jeu and str(message.channel.id) == channel_jeu and message.author == joueur1:
+        if message.content.lower() == "à devine":
+            joueur1_devine = message.author
+            id_joueur1_devine = message.author.id
+            joueur1 = False
+            await message.channel.send(f"qui joue à devine avec <@{id_joueur1_devine}> ?")
+            var_jeu = False
+            var_devine = True
+        elif message.content.lower() == "aux batons":
+            joueur1_batons = message.author
+            id_joueur1_batons = message.author.id
+            joueur1 = False
+            await message.channel.send(f"qui joue aux bâtons avec <@{id_joueur1_batons}> ?")
+            var_jeu = False
+            var_batons = True
+    # batons
+    if var_batons and str(message.channel.id) == channel_jeu:
+        nombre_e = int(message.content)
+        aff = ""
+        if message.content.lower() == "moi" and var_j2_batons:
+            joueur2_batons = message.author
+            id_joueur2_batons = message.author.id
+            var_j2_batons = False
+            if joueur1_batons == joueur2_batons:
+                await message.channel.send("Tricheur !")
+                await message.channel.send("On ne joue pas avec soi-même")
+                joueur1_batons = False
+                id_joueur1_batons = False
+                joueur2_batons = False
+                id_joueur2_batons = False
+                var_batons = False
+                var_j2_batons = True
+            else:
+                await bot.change_presence(activity=discord.Activity(type=0, name=f"bâtons avec {joueur1_batons} et {joueur2_batons}"))
+                await message.channel.send(". :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread: :french_bread:")
+                await message.channel.send(f"<@{id_joueur1_batons}> prends entre 1 et 3 bâtons")
+                var_batons_j1 = True
+        else:
+            if nombre_e <= 1 and nombre_e >= 3:
+                nombre_batons -= nombre_e
+                for x in range(nombre_batons):
+                    aff += " :french_bread:"
+                await message.channel.send(f". {aff}")
+                aff = ""
+
+    # devine
+    if var_devine and str(message.channel.id) == channel_jeu and message.content.lower() == "moi":
+        joueur2_devine = message.author
+        id_joueur2_devine = message.author.id
+        if str(joueur1_devine) not in dico_classement:
             dico_classement[str(joueur1)] = 0
-            print(f"    ajout de {joueur1} dans dico_classement")
-        elif joueur2 not in dico_classement == False:
-            dico_classement[str(joueur2)] = 0
-            print(f"    ajout de {joueur2} dans dico_classement")
-        if joueur1 == joueur2:
+            print(f"    ajout de {joueur1_devine} dans dico_classement")
+            with open("classement devine", "wb") as h:
+                pickle.dump(dico_classement, h)
+        elif str(joueur2_devine) not in dico_classement:
+            dico_classement[str(joueur2_devine)] = 0
+            print(f"    ajout de {joueur2_devine} dans dico_classement")
+            with open("classement devine", "wb") as h:
+                pickle.dump(dico_classement, h)
+        if joueur1_devine == joueur2_devine:
             await message.channel.send("Tricheur !")
             await message.channel.send("On ne joue pas avec soi-même")
-            joueur1 = False
-            joueur2 = False
-            id_joueur1 = False
-            id_joueur2 = False
+            joueur1_devine = False
+            joueur2_devine = False
+            id_joueur1_devine = False
+            id_joueur2_devine = False
             var_devine = False
             var_devine_j1 = False
             var_devine_j2 = False
         else:
-            await bot.change_presence(activity=discord.Activity(type=0, name=f"devine avec {joueur1} et {joueur2}"))
-            await message.channel.send(f"<@{id_joueur1}> devine (le nombre entre 1 et 99)")
+            await bot.change_presence(activity=discord.Activity(type=0, name=f"devine avec {joueur1_devine} et {joueur2_devine}"))
+            await message.channel.send(f"<@{id_joueur1_devine}> devine (le nombre entre 1 et 99)")
             var_devine_j1 = True
             nombre_a_d = random.randint(1, 99)
-    elif var_devine and str(message.channel.id) == channel_jeu:
-        if var_devine_j1 and message.author == joueur1:
+    if var_devine and str(message.channel.id) == channel_jeu:
+        if var_devine_j1 and message.author == joueur1_devine:
             nombre_d = int(message.content)
             if nombre_d == nombre_a_d:
                 await message.channel.send("bonne réponse")
                 points += 1
                 liste_points.append(points)
-                await message.channel.send(f"<@{id_joueur2}> devine (le nombre entre 1 et 99)")
+                await message.channel.send(f"<@{id_joueur2_devine}> devine (le nombre entre 1 et 99)")
                 var_devine_j1 = False
                 var_devine_j2 = True
                 nombre_a_d = random.randint(1, 99)
@@ -204,43 +257,49 @@ async def on_message(message):
             elif nombre_d > nombre_a_d:
                 await message.channel.send("moins")
                 points += 1
-        elif var_devine_j2 and message.author == joueur2:
+        elif var_devine_j2 and message.author == joueur2_devine:
             nombre_d = int(message.content)
             if nombre_d == nombre_a_d:
                 await message.channel.send("bonne réponse")
                 points += 1
                 liste_points.append(points)
-                await message.channel.send(f"<@{id_joueur1}> a trouvé en {liste_points[0]}")
-                await message.channel.send(f"<@{id_joueur2}> a trouvé en {liste_points[1]}")
+                await message.channel.send(f"<@{id_joueur1_devine}> a trouvé en {liste_points[0]}")
+                await message.channel.send(f"<@{id_joueur2_devine}> a trouvé en {liste_points[1]}")
                 monnaie_gagnee = 0
+                if id_joueur1_devine not in dico_monnaie:
+                    dico_monnaie[str(id_joueur1_devine)] = ["0", 0]
+                if id_joueur2_devine not in dico_monnaie:
+                    dico_monnaie[str(id_joueur2_devine)] = ["0", 0]
                 if liste_points[0] > liste_points[1]:
-                    gagnant = id_joueur2
-                    dico_classement[str(joueur2)] = dico_classement[str(joueur2)] + 1
+                    gagnant = id_joueur2_devine
+                    dico_classement[str(joueur2_devine)] = dico_classement[str(joueur2_devine)] + 1
                     monnaie_gagnee = random.randint(25, 50)
-                    dico_monnaie[str(joueur2)] += monnaie_gagnee
+                    infos_auteur = dico_monnaie[str(id_joueur2_devine)]
+                    dico_monnaie[str(joueur2_devine)] = [infos_auteur[0], infos_auteur[1]+monnaie_gagnee]
                     await message.channel.send(f"le gagnant est <@{gagnant}>")
-                    await message.channel.send(f"<@{id_joueur2}> a gagné {monnaie_gagnee} pièces")
+                    await message.channel.send(f"<@{id_joueur2_devine}> a gagné {monnaie_gagnee} pièces")
                 elif liste_points[0] < liste_points[1]:
-                    gagnant = id_joueur1
-                    dico_classement[str(joueur1)] = dico_classement[str(joueur1)] + 1
+                    gagnant = id_joueur1_devine
+                    dico_classement[str(joueur1_devine)] = dico_classement[str(joueur1_devine)] + 1
                     monnaie_gagnee = random.randint(25, 50)
-                    dico_monnaie[str(joueur1)] += monnaie_gagnee
+                    infos_auteur = dico_monnaie[str(id_joueur1_devine)]
+                    dico_monnaie[str(joueur1_devine)] = [infos_auteur[0], infos_auteur[1]+monnaie_gagnee]
                     await message.channel.send(f"le gagnant est <@{gagnant}>")
-                    await message.channel.send(f"<@{id_joueur1}> a gagné {monnaie_gagnee} pièces")
+                    await message.channel.send(f"<@{id_joueur1_devine}> a gagné {monnaie_gagnee} pièces")
                 elif liste_points[0] == liste_points[1]:
                     await message.channel.send("il y a égalité")
                     monnaie_gagnee = random.randint(10, 20)
-                infos_auteur = dico_monnaie[str(id_joueur1)]
-                dico_monnaie[str(id_joueur1)] = [infos_auteur[0], infos_auteur[1]+monnaie_gagnee]
-                infos_auteur = dico_monnaie[str(id_joueur2)]
-                dico_monnaie[str(id_joueur2)] = [infos_auteur[0], infos_auteur[1]+monnaie_gagnee]
-                await message.channel.send(f"<@{id_joueur1}> et <@{id_joueur2}> ont gagné {monnaie_gagnee} pièces")
+                    infos_auteur = dico_monnaie[str(id_joueur1_devine)]
+                    dico_monnaie[str(id_joueur1_devine)] = [infos_auteur[0], infos_auteur[1]+monnaie_gagnee]
+                    infos_auteur = dico_monnaie[str(id_joueur2_devine)]
+                    dico_monnaie[str(id_joueur2_devine)] = [infos_auteur[0], infos_auteur[1]+monnaie_gagnee]
+                    await message.channel.send(f"<@{id_joueur1_devine}> et <@{id_joueur2_devine}> ont gagné {monnaie_gagnee} pièces")
                 with open("monnaie FastBot", "wb") as m:
                     pickle.dump(dico_monnaie, m)
                 var_devine_j2 = False
                 var_devine = False
-                joueur1 = False
-                joueur2 = False
+                joueur1_devine = False
+                joueur2_devine = False
                 points = 0
                 liste_points = []
                 await bot.change_presence(activity=discord.Activity(type=0, name=None))
@@ -252,7 +311,8 @@ async def on_message(message):
             elif nombre_d > nombre_a_d:
                 await message.channel.send("moins")
                 points += 1
-    elif message.content == "<@1037734637285421197> quel est le classement ?" and str(message.channel.id) == channel_jeu:
+    # fin jeux
+    if message.content == "<@1037734637285421197> quel est le classement ?" and str(message.channel.id) == channel_jeu:
         classement_sorted = sorted(dico_classement, key=dico_classement.get, reverse=True)
         premier = classement_sorted[0]
         deuxieme = classement_sorted[1]
@@ -306,16 +366,16 @@ async def on_message(message):
         else:
             await message.channel.send("tu n'es pas admin")
     elif message.content.startswith("<@1037734637285421197> .role_VIP"):
-        id_role = str(message.content.split()[2])
-        id_role = id_role.replace("<", "")
-        id_role = id_role.replace("@", "")
-        id_role = id_role.replace("&", "")
-        id_role = id_role.replace(">", "")
-        dico_role_vip[str(message.guild)] = id_role
+        mess_split = str(message.content.split()[2])
+        mess_split = mess_split.replace("<", "")
+        mess_split = mess_split.replace("@", "")
+        mess_split = mess_split.replace("&", "")
+        mess_split = mess_split.replace(">", "")
+        dico_role_vip[str(message.guild)] = mess_split
         with open("save roles vip", "wb") as w:
             pickle.dump(dico_role_vip, w)
         await message.channel.send(f"Le rôle VIP de {message.guild} est <@&{dico_role_vip[str(message.guild)]}>")
-    elif message.content == "<@1037734637285421197> .channels":
+    elif message.content == "<@1037734637285421197> .channels" and message.author.guild_permissions.administrator:
         serveur = str(message.guild)
         await message.channel.send("Les salons de <@1037734637285421197> de ce serveur sont :")
         if serveur in dico_serv_jeu:
@@ -401,6 +461,53 @@ async def on_message(message):
             print("pas fait lol")
         elif item > 2:
             await message.channel.send(f"L'item numéro {item} n'existe pas")
+    elif message.content.startswith("<@1037734637285421197> .reset_argent") and str(message.author) == "fastattack#7170":
+        mess_split_a = str(message.content.split()[2])
+        mess_split_a = mess_split_a.replace("<", "")
+        mess_split_a = mess_split_a.replace("@", "")
+        mess_split_a = mess_split_a.replace(">", "")
+        if mess_split_a in dico_monnaie:
+            infos_auteur = dico_monnaie[str(mess_split_a)]
+            dico_monnaie[mess_split_a] = [str(date.today()), 0]
+            await message.channel.send(f"l'argent de <@{mess_split_a}> a été remis à 0")
+            var_annul_argent = True
+            annul_a = [str(mess_split_a), infos_auteur[0], infos_auteur[1]]
+            await message.channel.send("annulation disponible avec <@1037734637285421197> .annulation.argent")
+            with open("monnaie FastBot", "wb") as m:
+                pickle.dump(dico_monnaie, m)
+        else:
+            await message.channel.send("L'utilisateur n'a pas été trouvé")
+    elif message.content.startswith("<@1037734637285421197> .reset_classement") and str(message.author) == "fastattack#7170":
+        mess_split_c = str(message.content.split()[2])
+        mess_split_c = mess_split_c.replace("<", "")
+        mess_split_c = mess_split_c.replace("@", "")
+        mess_split_c = mess_split_c.replace(">", "")
+        nom = await bot.fetch_user(int(mess_split_c))
+        nom = str(nom)
+        if nom in dico_classement:
+            annul_c = [str(nom), dico_classement[nom]]
+            dico_classement[nom] = 0
+            await message.channel.send(f"le classement de <@{mess_split_c}> a été remis à 0")
+            var_annul_classement = True
+            await message.channel.send("annulation disponible avec <@1037734637285421197> .annulation.classement")
+            with open("classement devine", "wb") as h:
+                pickle.dump(dico_classement, h)
+        else:
+            await message.channel.send("L'utilisateur n'a pas été trouvé")
+    elif message.content == "<@1037734637285421197> .annulation.argent" and var_annul_argent and str(message.author) == "fastattack#7170":
+        dico_monnaie[str(annul_a[0])] = [annul_a[1], annul_a[2]]
+        with open("monnaie FastBot", "wb") as m:
+            pickle.dump(dico_monnaie, m)
+        await message.channel.send(f"le reset d'argent de <@{annul_a[0]}> a été annulé : il possède {annul_a[2]} pièces")
+        var_annul_argent = False
+        annul_a = None
+    elif message.content == "<@1037734637285421197> .annulation.classement" and var_annul_classement and str(message.author) == "fastattack#7170":
+        dico_classement[str(annul_c[0])] = annul_c[1]
+        with open("classement devine", "wb") as h:
+            pickle.dump(dico_classement, h)
+        await message.channel.send(f"le reset du classement de {annul_c[0]} a été annulé : il possède {annul_c[1]} victoires")
+        var_annul_classement = False
+        annul_c = None
 
 
 bot.run(os.getenv("TOKEN"))
