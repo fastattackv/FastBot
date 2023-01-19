@@ -1,5 +1,6 @@
-1- Inviter FastBot sur son serv grâce au lien et lui donner les perms demandées grâce au lien suivant : 
+1- Inviter FastBot sur son serveur grâce au lien et lui donner les perms demandées
 https://discord.com/api/oauth2/authorize?client_id=1037734637285421197&permissions=8&scope=bot
+
 
 2- Définir les salons en envoyant les messages dans les salons concernés:
 	celui de jeu (@FastBot .channel.jeu)
@@ -12,8 +13,9 @@ Si FastBot ne répond pas : vérifier l'orthographe des commandes (attention il 
 
 Puis vérifier que les channels sont bien définis en utilisant la commande (@FastBot .channels) dans n'importe quel salon
 
-3- Définir les roles en envoyant les messages dans n'importe quel salon:
-	le role VIP (@FastBot .role_VIP @nom_du_role_VIP)
+
+3- Définir les rôles en envoyant les messages dans n'importe quel salon:
+	le rôle VIP (@FastBot .role_VIP @nom_du_role_VIP)
 
 Si FastBot ne répond pas : vérifier l'orthographe des commandes (attention il y a un espace entre @FastBot et .)(si ça ne marche toujours pas veuillez contacter les développeurs sur le serveur d'aide de FastBot)
 
@@ -30,3 +32,6 @@ Infos supplémentaires :
 - De même si vous modifiez un rôle : vérifiez avec la commande @FastBot .roles
 - Si vous modifiez le nom de votre serveur, vérifiez que FastBot envoie un message de confirmation (en théorie il devrait update tout seul mais il est possible qu'il ne le voit pas, si c'est le cas veuillez contacter un développeur sur le serveur d'aide)
 - Pour retirer FastBot de votre serveur, il suffit de l'expulser avec les permissions nécéssaires
+
+Lien du serveur de support de FastBot:
+https://discord.gg/pHPkkpXhUV
