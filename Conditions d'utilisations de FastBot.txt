@@ -1,0 +1,24 @@
+Conditions d'utilisations de FastBot (bot discord dévellopé par Fastattack):
+écrites par Fastattack
+
+Pour utiliser FastBot vous devez accepter ces conditions, si vous ne respectez pas les conditions le staff de FastBot se réserve le droit de bannir tous les membres du staff du serveur concerné de l'utilisation de FastBot
+Si vous n'acceptez pas les conditions vous ne pouvez pas utiliser FastBot, toutefois si vous n'acceptez pas les conditions et utilisez FastBot, le staff se réserve le droit de bannir toutes les personnes concernées ayant contrôlé le bot
+
+
+I/ Interdictions :
+
+1_ Interdiction de hacker ou d'abuser du code pour modifier quoi que ce soit dans le code de FastBot
+2_ Interdiction d'utiliser FastBot à des fins de vente, quels que soient les produits
+3_ Interdiction d'utiliser FastBot à des fins de d'attaque de serveurs discord
+4_ Interdiction d'utiliser FastBot à des fins de harcelement ou d'attaques envers d'autres en tout genre
+
+
+II/ Autorisations du staff :
+
+1_ Le staff se réserve le droit, dans toutes les situations, de pouvoir lire/ copier et publier tous les messages et noms des salons concernant FastBot
+
+
+III/ Autres informations :
+
+1_ Si vous avez des doutes sur les utilisations possibles de FastBot vous pouvez venir sur le serveur discord de FastBot pour poser des questions
+2_ Si vous rencotrez un bug/ faille important ou des personnes abusant des ces bugs ou failles, merci de contacter au plus vite un des administrateurs du bot ou les modérateurs sur le serveur discord de FastBot
